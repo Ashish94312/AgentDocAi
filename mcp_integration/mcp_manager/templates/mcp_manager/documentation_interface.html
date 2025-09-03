@@ -1,0 +1,178 @@
+<!-- Task 3: Build the User Interface -->
+
+<html>
+
+<head>
+    <style>
+        /* Root palette & typography */
+        :root {
+        --bg: #0b1020;
+        --card: #111833;
+        --text: #e6e9f4;
+        --muted: #9aa3b2;
+        --accent: #6ea8fe;
+        --accent-strong: #4a86ff;
+        --danger: #ff6b6b;
+        --border: rgba(255,255,255,0.08);
+        --ring: rgba(110,168,254,0.45);
+        --radius: 16px;
+        --shadow: 0 10px 30px rgba(0,0,0,0.35);
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+        height: 100%;
+        }
+
+        body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+        background: radial-gradient(1200px 600px at 80% -10%, #1a2245 0%, transparent 60%) , var(--bg);
+        display: grid;
+        place-items: start center;
+        padding: 48px 16px;
+        }
+
+        /* Page title */
+        h1 {
+        font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.2rem);
+        margin: 0 0 20px;
+        letter-spacing: 0.2px;
+        line-height: 1.15;
+        text-align: center;
+        background: linear-gradient(90deg, #c9d8ff, #9ec5ff 50%, #c9d8ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        }
+
+        /* Card container (wrap existing content) */
+        body > h1 + * {
+        width: min(720px, 100%);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 24px;
+        backdrop-filter: blur(6px);
+        }
+
+        /* Error message: works with your inline red style OR class .error */
+        p[style*="color:red"], .error {
+        color: var(--danger) !important;
+        background: rgba(255, 107, 107, 0.08);
+        border: 1px solid rgba(255, 107, 107, 0.3);
+        padding: 10px 12px;
+        border-radius: 10px;
+        margin: 0 0 16px;
+        font-weight: 500;
+        }
+
+        /* Form layout */
+        form {
+        display: grid;
+        gap: 16px;
+        margin-top: 8px;
+        }
+
+        form > div {
+        display: grid;
+        gap: 8px;
+        }
+
+        /* Labels & help text */
+        label {
+        font-size: 0.95rem;
+        color: #d8def0;
+        }
+
+        /* Inputs */
+        input[type="url"] {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        background: #0e1530;
+        color: var(--text);
+        border-radius: 12px;
+        outline: none;
+        transition: border-color .2s ease, box-shadow .2s ease, transform .05s ease;
+        }
+
+        input[type="url"]::placeholder {
+        color: var(--muted);
+        }
+
+        input[type="url"]:hover {
+        border-color: rgba(255,255,255,0.14);
+        }
+
+        input[type="url"]:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--ring);
+        }
+
+        /* Button */
+        button[type="submit"] {
+        justify-self: start;
+        border: 1px solid transparent;
+        background: linear-gradient(180deg, var(--accent), var(--accent-strong));
+        color: #0b1020;
+        font-weight: 700;
+        padding: 12px 18px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: transform .05s ease, box-shadow .2s ease, filter .2s ease;
+        box-shadow: 0 8px 18px rgba(78, 130, 255, 0.35);
+        }
+
+        button[type="submit"]:hover {
+        filter: brightness(1.05);
+        box-shadow: 0 10px 22px rgba(78, 130, 255, 0.45);
+        }
+
+        button[type="submit"]:active {
+        transform: translateY(1px);
+        }
+
+        /* Divider */
+        hr {
+        border: none;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        margin: 24px 0 0;
+        }
+
+        /* Small screens */
+        @media (max-width: 480px) {
+        body { padding-top: 28px; }
+        body > h1 + * { padding: 18px; }
+        button[type="submit"] { width: 100%; justify-self: stretch; text-align: center; }
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <h1>Generate Documentation for github repo</h1>
+
+    {% if error %}
+    <p style = "color:red;">{{error}}</p>
+    {% endif %}
+
+    <form method="post" action="{% url 'generate_documentation' %}">
+        {% csrf_token %}
+        <div>
+            <label for="repo_url"> github Repository URL</label>
+            <input type = "url" id = "repo_url" name = "repo_url" size="60", placeholder = "e.g., https://github.com/owner/repo"> 
+        </div>
+        <button type = "submit"> Generate Documentation/button>   
+    </form>
+
+    <hr>
+
+</body>
+
+</html>
