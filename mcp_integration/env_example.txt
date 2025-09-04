@@ -1,0 +1,9 @@
+# OpenAI API Key for CrewAI functionality
+OPENAI_API_KEY=your_openai_api_key_here
+
+# GitHub Personal Access Token for MCP server integration
+GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token_here
+
+# Django Secret Key (change this in production)
+SECRET_KEY=your_django_secret_key_here
+

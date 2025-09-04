@@ -67,36 +67,39 @@ def convert_markdown_to_html(markdown_file_path):
 
 
 def documentation_interface(request):
-    return render(request,'mcp_manager/documentation_interface.html')
+    return render(request, 'mcp_manager/documentation_interface.html')
 
 
 def generate_documentation(request):
-
     if request.method == 'POST':
-        repo_url = request.POST.get('repo_url','')
-        # owner, repo_name = extract_owner_repo(repo)
-        if repo_url :
+        repo_url = request.POST.get('repo_url', '')
+        if repo_url:
             try:
-                owner,repo_name = extract_owner_repo(repo_url)
+                owner, repo_name = extract_owner_repo(repo_url)
 
                 if owner and repo_name:
                     if not OPENAI_API_KEY:
                         error = "Error: OPENAI_API_KEY is not set in Django settings."
-                        return render(request,'mcp_manager/documentation_interface.html')
+                        return render(request, 'mcp_manager/documentation_interface.html', {'error': error})
 
                     llm = ChatOpenAI(api_key=OPENAI_API_KEY, model_name="gpt-3.5-turbo-16k")
 
-                    crew = build_crew(owner,repo_name)
+                    crew = build_crew(owner, repo_name)
                     crew.kickoff()
 
+                    # Create the generate_docs directory if it doesn't exist
+                    import os
+                    docs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'generate_docs')
+                    os.makedirs(docs_dir, exist_ok=True)
+
                     output_files = [
-                        "/usercode/mcp_integration/generated_docs/repo_structure.md",
-                        "/usercode/mcp_integration/generated_docs/report_issues.md",
-                        "/usercode/mcp_integration/generated_docs/pull_requests.md",
-                        "/usercode/mcp_integration/generated_docs/branches.md"
+                        os.path.join(docs_dir, "repo_structure.md"),
+                        os.path.join(docs_dir, "report_issues.md"),
+                        os.path.join(docs_dir, "pull_requests.md"),
+                        os.path.join(docs_dir, "branches.md")
                     ]
 
-                    final_output_path = "/usercode/mcp_integration/generated_docs/summary.md"
+                    final_output_path = os.path.join(docs_dir, "summary.md")
                     combined_markdown_path = combine_markdown_files(output_files, final_output_path, owner, repo_name)
 
                     if combined_markdown_path:
@@ -117,9 +120,9 @@ def generate_documentation(request):
 
             except ValueError as e:
                 error = str(e)
-                return render(request,'mcp_manager/documentation_interface.html', {'error': error})
+                return render(request, 'mcp_manager/documentation_interface.html', {'error': error})
 
-    return render(request,'mcp_manager/documentation_interface.html')
+    return render(request, 'mcp_manager/documentation_interface.html')
 
             
 
