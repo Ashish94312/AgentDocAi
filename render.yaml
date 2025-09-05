@@ -12,9 +12,9 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
-        value: False
+        value: "False"   # must be a string in Render
       - key: ALLOWED_HOSTS
-        value: repodoc-ai.onrender.com
+        value: "repodoc-ai.onrender.com"
       - key: GITHUB_PERSONAL_ACCESS_TOKEN
         sync: false
       - key: OPENAI_API_KEY
@@ -26,9 +26,8 @@ services:
     healthCheckPath: /
     autoDeploy: true
 
-  # PostgreSQL Database
-  - type: pserv
-    name: repodoc-ai-db
+databases:
+  - name: repodoc-ai-db
     plan: free
     databaseName: repodoc_ai
     user: repodoc_user
