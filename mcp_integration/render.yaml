@@ -1,13 +1,13 @@
 databases:
-  - name: mysitedb
+  - name: repodoc_ai
     plan: free
-    databaseName: mysite
-    user: mysite
+    databaseName: repodoc_ai
+    user: repodoc_ai
 
 services:
   - type: web
     plan: free
-    name: mysite
+    name: mcp_integration
     runtime: python
     buildCommand: './build.sh'
     startCommand: 'python -m gunicorn mcp_integration.asgi:application -k uvicorn.workers.UvicornWorker'
