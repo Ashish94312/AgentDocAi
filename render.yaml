@@ -1,0 +1,34 @@
+services:
+  # Django Web Application
+  - type: web
+    name: repodoc-ai
+    env: python
+    plan: free
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn mcp_integration.wsgi:application
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: repodoc-ai.onrender.com
+      - key: GITHUB_PERSONAL_ACCESS_TOKEN
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: repodoc-ai-db
+          property: connectionString
+    healthCheckPath: /
+    autoDeploy: true
+
+  # PostgreSQL Database
+  - type: pserv
+    name: repodoc-ai-db
+    plan: free
+    databaseName: repodoc_ai
+    user: repodoc_user
