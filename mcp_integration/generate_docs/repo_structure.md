@@ -1,1 +1,1 @@
-Unable to retrieve the directory structure from the Ashish94312/VoiceChatBot repository. Please check the repository for any existing content or confirm the access permissions.
+The Ashish94312/VoiceChatBot repository is empty or inaccessible, and therefore no file structure can be provided.
