@@ -10,7 +10,7 @@ services:
     name: mcp_integration
     runtime: python
     buildCommand: './mcp_integration/build.sh'
-    startCommand: 'cd mcp_integration && python -m gunicorn mcp_integration.asgi:application -k uvicorn.workers.UvicornWorker'
+    startCommand: 'cd mcp_integration && python -m gunicorn mcp_integration.asgi:application -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --timeout 120 --workers 2'
     envVars:
       - key: DATABASE_URL
         fromDatabase:
