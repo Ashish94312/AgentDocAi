@@ -10,7 +10,7 @@ services:
     name: repodoc-ai
     runtime: python
     buildCommand: 'cd mcp_integration && chmod +x build.sh && ./build.sh'
-    startCommand: 'cd mcp_integration && source venv/bin/activate && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn mcp_integration.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --max-requests 1000 --max-requests-jitter 100 --preload'
+    startCommand: 'cd mcp_integration && chmod +x start_production.sh && ./start_production.sh'
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -24,6 +24,8 @@ services:
         value: 'repodoc-ai.onrender.com'
       - key: WEB_CONCURRENCY
         value: '2'
+      - key: PORT
+        value: '10000'
       - key: GITHUB_PERSONAL_ACCESS_TOKEN
         sync: false
       - key: OPENAI_API_KEY
