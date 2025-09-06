@@ -76,20 +76,20 @@ WSGI_APPLICATION = 'mcp_integration.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
-    'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default='postgresql://repodoc_user:hD81c8n1wTXJtmcp9WINTKReecPPm9u8@dpg-d2t4ilre5dus73dfle7g-a.oregon-postgres.render.com/repodoc_ai',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         # Replace this value with your local database's connection string.
+#         default='postgresql://repodoc_user:hD81c8n1wTXJtmcp9WINTKReecPPm9u8@dpg-d2t4ilre5dus73dfle7g-a.oregon-postgres.render.com/repodoc_ai',
+#         conn_max_age=600
+#     )
+# }
 
 
 # Password validation
