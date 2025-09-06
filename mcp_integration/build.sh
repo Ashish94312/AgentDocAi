@@ -4,6 +4,20 @@ set -o errexit
 # Change to the mcp_integration directory
 cd "$(dirname "$0")"
 
+# Try to build the MCP server if Go is available
+echo "Attempting to build GitHub MCP server..."
+if command -v go &> /dev/null; then
+    echo "Go found, building MCP server..."
+    cd ../github-mcp-server
+    go mod download
+    go build -o github-mcp-server cmd/github-mcp-server/main.go
+    echo "MCP server built successfully!"
+    cd ../mcp_integration
+else
+    echo "Go not found, MCP server will not be available"
+    echo "Consider using Docker deployment or Railway for full MCP support"
+fi
+
 # Check if virtual environment exists, create if not
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."

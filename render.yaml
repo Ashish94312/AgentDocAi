@@ -6,11 +6,9 @@ databases:
 
 services:
   - type: web
-    plan: free
+    plan: starter
     name: repodoc-ai
-    runtime: python
-    buildCommand: 'cd mcp_integration && chmod +x build.sh && ./build.sh'
-    startCommand: 'cd mcp_integration && chmod +x start_production.sh && ./start_production.sh'
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: DATABASE_URL
         fromDatabase:

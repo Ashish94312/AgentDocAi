@@ -136,7 +136,14 @@ def mcp_tool(command_args: list[str]) -> dict or list or str or None:
 
     except FileNotFoundError:
         print(f"Error: MCP server not found at {github_mcp_server_path}")
-        return None
+        print("Falling back to GitHub API...")
+        # Fallback to GitHub API if MCP server is not available
+        try:
+            from .github_api import github_tool
+            return github_tool(tool_name, **{arg: mcp_request["params"]["arguments"][arg] for arg in mcp_request["params"]["arguments"]})
+        except ImportError:
+            print("GitHub API fallback not available")
+            return None
     except subprocess.TimeoutExpired:
         print("Error: Timeout communicating with MCP server.")
         return None
