@@ -1,11 +1,11 @@
-# Multi-stage build for RepoDoc-AI with MCP server
+# Optimized Dockerfile for Railway deployment
 FROM golang:1.21-alpine AS mcp-builder
 
 # Install build dependencies
 RUN apk add --no-cache git
 
-# Build the GitHub MCP server
-WORKDIR /app/github-mcp-server
+# Set working directory
+WORKDIR /app
 
 # Copy go.mod and go.sum first for better caching
 COPY github-mcp-server/go.mod github-mcp-server/go.sum ./
@@ -41,17 +41,17 @@ RUN apt-get update \
 WORKDIR /app
 
 # Copy and install Python dependencies
-COPY mcp_integration/requirements.txt /app/
+COPY mcp_integration/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the built MCP server from the builder stage
-COPY --from=mcp-builder /app/github-mcp-server/github-mcp-server /app/github-mcp-server/
+COPY --from=mcp-builder /app/github-mcp-server /app/github-mcp-server/
 
 # Copy the Django application
-COPY mcp_integration/ /app/
+COPY mcp_integration/ ./
 
 # Create staticfiles directory
-RUN mkdir -p /app/staticfiles
+RUN mkdir -p staticfiles
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
