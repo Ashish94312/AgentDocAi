@@ -5,7 +5,6 @@
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "startCommand": "gunicorn --bind 0.0.0.0:$PORT --workers 3 --timeout 120 mcp_integration.wsgi:application",
     "healthcheckPath": "/",
     "healthcheckTimeout": 100,
     "restartPolicyType": "ON_FAILURE",

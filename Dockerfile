@@ -36,8 +36,12 @@ RUN adduser --disabled-password --gecos '' appuser \
     && chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
-EXPOSE $PORT
+# Expose port (Railway will set the actual port)
+EXPOSE 8000
 
-# Use gunicorn for production
-CMD gunicorn --bind 0.0.0.0:$PORT --workers 3 --timeout 120 mcp_integration.wsgi:application
+# Copy and setup startup script
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+# Use startup script
+CMD ["/app/start.sh"]
