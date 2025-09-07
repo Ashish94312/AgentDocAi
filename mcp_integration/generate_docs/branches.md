@@ -1,14 +1,15 @@
-```markdown
-# Branches Summary for Ashish94312/VoiceChatBot
+# AgentDocAi Repository Branch Summary
 
-## Current Status
-- **Total Branches**: 0
+## Branches
+1. **main**
+   - **Commit SHA:** [21521bfc85d04c78adb12f86b4fae105c5ba34d1](https://api.github.com/repos/Ashish94312/AgentDocAi/commits/21521bfc85d04c78adb12f86b4fae105c5ba34d1)
+   - **Protected:** No
 
 ### Analysis
-- The absence of branches indicates that the repository may be new or not yet actively developed.
-- It suggests there may not be any contributions or discussions happening at this moment.
+- Currently, the only branch available in the repository is the `main` branch.
+- There are no other branches available for collaboration, suggesting that development is primarily focused on this branch.
 
-## Recommendations
-- **Prioritize Creating Branches**: It's important to start working on foundational code in order to establish branches and attract contributors. 
-- **Set Up Initial Tasks**: Consider creating the first set of features or enhancements in new branches to stimulate interest and development in the repository.
-```
+### Recommendations
+- Encourage contributors to create new branches for feature development or bug fixes.
+- Monitor the main branch for regular updates and integration of new features.
+- Consider adding more branches to manage development efforts better and facilitate collaborative contributions.
