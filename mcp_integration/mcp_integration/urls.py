@@ -17,9 +17,28 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
+
+def health_check(request):
+    """Simple health check endpoint for Railway"""
+    return JsonResponse({'status': 'healthy', 'message': 'Django app is running'})
+
+def root_view(request):
+    """Simple root view that doesn't depend on templates"""
+    return JsonResponse({
+        'message': 'AgentDocAI Django Application',
+        'status': 'running',
+        'endpoints': {
+            'health': '/health/',
+            'admin': '/admin/',
+            'documentation': '/'
+        }
+    })
 
 # Task 4: Add your application's URLconf 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('health/', health_check, name='health_check'),
+    path('api/', root_view, name='root_view'),
     path('', include('mcp_manager.urls')),
 ]
