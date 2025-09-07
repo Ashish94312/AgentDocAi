@@ -24,6 +24,10 @@ RUN pip install --no-cache-dir --upgrade pip \
 # Copy project
 COPY . .
 
+# Copy and setup startup script (before user switch)
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Set Django settings
 ENV DJANGO_SETTINGS_MODULE=mcp_integration.settings
 
@@ -38,10 +42,6 @@ USER appuser
 
 # Expose port (Railway will set the actual port)
 EXPOSE 8000
-
-# Copy and setup startup script
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
 
 # Use startup script
 CMD ["/app/start.sh"]
