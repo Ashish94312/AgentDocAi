@@ -11,6 +11,20 @@ echo "Contents: $(ls -la)"
 echo "Checking Django configuration..."
 python manage.py check --deploy
 
+# Test the health endpoint
+echo "Testing health endpoint..."
+python -c "
+import os
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mcp_integration.settings')
+django.setup()
+from django.test import Client
+client = Client()
+response = client.get('/health/')
+print(f'Health endpoint status: {response.status_code}')
+print(f'Health endpoint content: {response.content.decode()}')
+"
+
 # Run migrations
 echo "Running database migrations..."
 python manage.py migrate --noinput

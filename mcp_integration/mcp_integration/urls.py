@@ -18,10 +18,24 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def health_check(request):
     """Simple health check endpoint for Railway"""
-    return JsonResponse({'status': 'healthy', 'message': 'Django app is running'})
+    try:
+        return JsonResponse({
+            'status': 'healthy', 
+            'message': 'Django app is running',
+            'timestamp': __import__('datetime').datetime.now().isoformat(),
+            'host': request.get_host(),
+            'method': request.method
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
 
 def root_view(request):
     """Simple root view that doesn't depend on templates"""
