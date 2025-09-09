@@ -1,5 +1,5 @@
 from crewai.tools import BaseTool
-from mcp_manager.utils_optimized import mcp_tool_optimized
+from mcp_manager.utils import mcp_tool
 
 
 class GetPullRequestsTool(BaseTool):
@@ -17,7 +17,7 @@ class GetPullRequestsTool(BaseTool):
             List of pull requests in the repository
         """
         print(f"Pull Requests Lister: Get the pull requests issues for {owner}/{repo}")
-        result = mcp_tool_optimized([
+        result = mcp_tool([
             'tools', 'list_pull_requests',
             '--owner', owner,
             '--repo', repo,

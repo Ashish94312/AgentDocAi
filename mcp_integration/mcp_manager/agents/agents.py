@@ -12,9 +12,7 @@ repo_structure_auditor = Agent(
         "Markdown summaries of files and folders, especially for documentation purposes."
     ),
     tools=[get_repo_files],
-    verbose=False,  # Reduced verbosity for better performance
-    max_iter=3,  # Limit iterations to prevent infinite loops
-    max_execution_time=60  # 1 minute timeout per agent
+    verbose=True
 )
 
 issue_analyst = Agent(
@@ -25,9 +23,7 @@ issue_analyst = Agent(
         "You know how to summarize them effectively and highlight the ones that need urgent attention."
     ),
     tools=[get_issue],
-    verbose=False,  # Reduced verbosity for better performance
-    max_iter=3,  # Limit iterations to prevent infinite loops
-    max_execution_time=60  # 1 minute timeout per agent
+    verbose=True
 )
 
 pull_requests_fetcher_reporter = Agent(
@@ -35,9 +31,7 @@ pull_requests_fetcher_reporter = Agent(
     goal="Fetch and provide a list of 5 most recently created pull requests from a GitHub repository.",
     backstory="You are an expert in retrieving information about GitHub issues using the MCP server. You also concisely summarize open issues as categories and provide a comprehensive and readable report",
     tools=[get_pull_requests],
-    verbose=False,  # Reduced verbosity for better performance
-    max_iter=3,  # Limit iterations to prevent infinite loops
-    max_execution_time=60  # 1 minute timeout per agent
+    verbose=True
 )
 
 repo_branch_reporter = Agent(
@@ -45,7 +39,5 @@ repo_branch_reporter = Agent(
     goal="Fetch and provide a list of 5 branches in a GitHub repository.",
     backstory="You are an expert in retrieving information about GitHub issues using the MCP server. You also concisely summarize branch as categories and provide a comprehensive and readable report",
     tools=[get_repo_branches],
-    verbose=False,  # Reduced verbosity for better performance
-    max_iter=3,  # Limit iterations to prevent infinite loops
-    max_execution_time=60  # 1 minute timeout per agent
+    verbose=True
 )

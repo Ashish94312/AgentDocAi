@@ -27,7 +27,7 @@ def analyze_repo_structure_task(owner, repo):
             tools=[get_repo_files],  
             output_file="generate_docs/repo_structure.md",  
             create_directory=True,
-            verbose=False  # Reduced verbosity for better performance
+            verbose=True
         )
     ]
 
@@ -50,7 +50,7 @@ def get_issue_tasks(owner, repo):
             tools=[get_issue],
             output_file="generate_docs/report_issues.md",
             create_directory=True,
-            verbose=False  # Reduced verbosity for better performance
+            verbose=True
         )
     ]
 
@@ -64,7 +64,7 @@ def list_pull_requests_tasks(owner, repo):
             tools=[get_pull_requests],
             output_file="generate_docs/pull_requests.md",
             create_directory=True,
-            verbose=False  # Reduced verbosity for better performance
+            verbose=True
         )
     ]
 
@@ -78,6 +78,6 @@ def list_branches_tasks(owner, repo):
             tools=[get_repo_branches],
             output_file="generate_docs/branches.md",
             create_directory=True,
-            verbose=False  # Reduced verbosity for better performance
+            verbose=True
         )
     ]
