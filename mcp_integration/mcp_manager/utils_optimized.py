@@ -55,8 +55,31 @@ class MCPConnectionPool:
                 return self.connections[thread_id]
             
             # Create new connection
-            project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            # Get the project root (AgentDocAi directory)
+            current_file = os.path.abspath(__file__)
+            # Go up: utils_optimized.py -> mcp_manager -> mcp_integration -> AgentDocAi
+            project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_file)))
             github_mcp_server_path = os.path.join(project_root, 'github-mcp-server', 'github-mcp-server')
+            
+            # Verify the path exists
+            if not os.path.exists(github_mcp_server_path):
+                print(f"❌ MCP server not found at: {github_mcp_server_path}")
+                print(f"📁 Project root: {project_root}")
+                print(f"🔍 Looking for: {github_mcp_server_path}")
+                # Try alternative paths
+                alt_paths = [
+                    os.path.join(project_root, 'github-mcp-server', 'github-mcp-server'),
+                    os.path.join(project_root, 'github-mcp-server', 'cmd', 'github-mcp-server', 'github-mcp-server'),
+                    '/Users/ashishkumar/AgentDocAi/github-mcp-server/github-mcp-server'
+                ]
+                for alt_path in alt_paths:
+                    if os.path.exists(alt_path):
+                        github_mcp_server_path = alt_path
+                        print(f"✅ Found MCP server at: {github_mcp_server_path}")
+                        break
+                else:
+                    print("❌ MCP server not found in any expected location")
+                    raise FileNotFoundError(f"MCP server not found at {github_mcp_server_path}")
             
             env = os.environ.copy()
             env['GITHUB_PERSONAL_ACCESS_TOKEN'] = settings.GITHUB_PERSONAL_ACCESS_TOKEN

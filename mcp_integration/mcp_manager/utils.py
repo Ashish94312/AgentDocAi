@@ -10,9 +10,29 @@ def mcp_tool(command_args: list[str]) -> dict or list or str or None:
     Executes the MCP server directly with the given command arguments and returns the JSON response.
     This bypasses the problematic mcpcurl tool and communicates directly with the MCP server.
     """
-    # Get the project root directory (parent of mcp_integration)
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    # Get the project root directory (AgentDocAi directory)
+    current_file = os.path.abspath(__file__)
+    # Go up: utils.py -> mcp_manager -> mcp_integration -> AgentDocAi
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_file)))
     github_mcp_server_path = os.path.join(project_root, 'github-mcp-server', 'github-mcp-server')
+    
+    # Verify the path exists
+    if not os.path.exists(github_mcp_server_path):
+        print(f"❌ MCP server not found at: {github_mcp_server_path}")
+        print(f"📁 Project root: {project_root}")
+        # Try alternative paths
+        alt_paths = [
+            os.path.join(project_root, 'github-mcp-server', 'github-mcp-server'),
+            '/Users/ashishkumar/AgentDocAi/github-mcp-server/github-mcp-server'
+        ]
+        for alt_path in alt_paths:
+            if os.path.exists(alt_path):
+                github_mcp_server_path = alt_path
+                print(f"✅ Found MCP server at: {github_mcp_server_path}")
+                break
+        else:
+            print("❌ MCP server not found in any expected location")
+            raise FileNotFoundError(f"MCP server not found at {github_mcp_server_path}")
     
     # Parse the command to determine what tool to call
     if len(command_args) < 3 or command_args[0] != 'tools':
