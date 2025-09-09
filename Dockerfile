@@ -39,6 +39,11 @@
     COPY . .
     
     # -----------------------------
+    # Set working directory to Django project
+    # -----------------------------
+    WORKDIR /app/mcp_integration
+    
+    # -----------------------------
     # Create non-root user
     # -----------------------------
     RUN adduser --disabled-password --gecos '' appuser \

@@ -5,6 +5,10 @@ echo "Starting Django application..."
 echo "Current directory: $(pwd)"
 echo "Contents: $(ls -la)"
 
+# Change to Django project directory
+cd /app/mcp_integration
+echo "Changed to Django project directory: $(pwd)"
+
 # Check Django configuration
 echo "Checking Django configuration..."
 python manage.py check
