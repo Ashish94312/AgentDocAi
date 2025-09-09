@@ -167,6 +167,7 @@ if not DEBUG:
     
     # HTTPS settings (Railway handles this)
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = True
+    # Disable SSL redirect to allow healthcheck requests over HTTP
+    SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
