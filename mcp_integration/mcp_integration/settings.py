@@ -33,6 +33,9 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 # Allow all hosts for Railway deployment
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
+# Disable APPEND_SLASH to prevent redirects on health endpoint
+APPEND_SLASH = False
+
 
 # Application definition
 
