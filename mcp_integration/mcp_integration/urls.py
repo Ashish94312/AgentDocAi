@@ -53,6 +53,7 @@ def root_view(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('health/', health_check, name='health_check'),
+    path('health', health_check, name='health_check_no_slash'),
     path('api/', root_view, name='root_view'),
     path('', include('mcp_manager.urls')),
 ]
