@@ -17,20 +17,7 @@ python manage.py check
 echo "Running database migrations..."
 python manage.py migrate --noinput
 
-# Optional health check
-if [ "${CHECK_HEALTH:-true}" = "true" ]; then
-    echo "Testing health endpoint..."
-    python -c "
-import os
-import django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mcp_integration.settings')
-django.setup()
-from django.test import Client
-client = Client()
-response = client.get('/health/')
-print(f'Health endpoint status: {response.status_code}')
-"
-fi
+# Health check removed - no longer needed
 
 # Start Gunicorn
 NUM_WORKERS=${GUNICORN_WORKERS:-3}

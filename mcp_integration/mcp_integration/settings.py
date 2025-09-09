@@ -33,6 +33,11 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # Allow all hosts for Railway deployment
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+# Add testserver for Django test client
+if 'testserver' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('testserver')
+
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 
 # Disable APPEND_SLASH to prevent redirects on health endpoint
 APPEND_SLASH = False
