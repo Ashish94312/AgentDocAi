@@ -44,10 +44,16 @@
     WORKDIR /app/mcp_integration
     
     # -----------------------------
-    # Create non-root user
+    # Copy start script
+    # -----------------------------
+    COPY start.sh /app/start.sh
+    
+    # -----------------------------
+    # Create non-root user and set permissions
     # -----------------------------
     RUN adduser --disabled-password --gecos '' appuser \
-        && chown -R appuser:appuser /app
+        && chown -R appuser:appuser /app \
+        && chmod +x /app/start.sh
     
     USER appuser
     
@@ -60,12 +66,6 @@
     # Expose port
     # -----------------------------
     EXPOSE 8000
-    
-    # -----------------------------
-    # Start the application
-    # -----------------------------
-    COPY start.sh /app/start.sh
-    RUN chmod +x /app/start.sh
     
     CMD ["/app/start.sh"]
     
