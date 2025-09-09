@@ -36,6 +36,9 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 # Add testserver for Django test client
 if 'testserver' not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append('testserver')
+# Add Railway domain
+if 'agentdocai-production.up.railway.app' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('agentdocai-production.up.railway.app')
 
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 
