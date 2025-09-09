@@ -1,5 +1,5 @@
 from crewai.tools import BaseTool
-from mcp_manager.utils import mcp_tool
+from mcp_manager.utils_optimized import mcp_tool_optimized
 
 
 class GetRepoFilesTool(BaseTool):
@@ -18,7 +18,7 @@ class GetRepoFilesTool(BaseTool):
             List of files and folders in the repository
         """
         print(f"Repo structure Lister: Get files at {path} for {owner}/{repo}")
-        result = mcp_tool([
+        result = mcp_tool_optimized([
             "tools", "get_file_contents",
             "--owner", owner,
             "--repo", repo,

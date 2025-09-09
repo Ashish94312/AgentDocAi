@@ -1,5 +1,5 @@
 from crewai.tools import BaseTool
-from mcp_manager.utils import mcp_tool
+from mcp_manager.utils_optimized import mcp_tool_optimized
 
 
 class GetRepoBranchesTool(BaseTool):
@@ -19,7 +19,7 @@ class GetRepoBranchesTool(BaseTool):
             List of branches in the repository
         """
         print(f"Branch Lister: Getting branches of {owner}/{repo}")
-        result = mcp_tool([
+        result = mcp_tool_optimized([
             'tools', 'list_branches',
             '--owner', owner,
             '--repo', repo,
@@ -73,7 +73,7 @@ class GetRepoFileStructureTool(BaseTool):
         if ref:
             command_args.extend(['--ref', ref])
         
-        result = mcp_tool(command_args)
+        result = mcp_tool_optimized(command_args)
         
         if isinstance(result, list):
             return result

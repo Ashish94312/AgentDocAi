@@ -1,5 +1,5 @@
 from crewai.tools import BaseTool
-from ..utils import mcp_tool
+from ..utils_optimized import mcp_tool_optimized
 
 
 class GetIssueTool(BaseTool):
@@ -17,7 +17,7 @@ class GetIssueTool(BaseTool):
             List of open issues in the repository
         """
         print(f"Issue Retriever: getting open issues for {owner}/{repo}")
-        result = mcp_tool([
+        result = mcp_tool_optimized([
             'tools', 'list_issues',
             '--owner', owner,
             '--repo', repo,

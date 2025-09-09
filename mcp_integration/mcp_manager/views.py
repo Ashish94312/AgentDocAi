@@ -9,6 +9,8 @@ from django.http import HttpResponseRedirect
 from langchain_openai import ChatOpenAI
 
 from .crews.crew import build_crew
+from .crews.crew_async import build_crew_parallel
+from .utils_optimized import cleanup_mcp_connections
 
 
 GITHUB_TOKEN = getattr(settings, 'GITHUB_PERSONAL_ACCESS_TOKEN', None)
@@ -84,8 +86,11 @@ def generate_documentation(request):
 
                     llm = ChatOpenAI(api_key=OPENAI_API_KEY, model_name="gpt-3.5-turbo-16k")
 
-                    crew = build_crew(owner, repo_name)
-                    crew.kickoff()
+                    # Use parallel execution for better performance
+                    results = build_crew_parallel(owner, repo_name)
+                    
+                    # Clean up MCP connections after crew execution
+                    cleanup_mcp_connections()
 
                     # Create the generate_docs directory if it doesn't exist
                     import os
