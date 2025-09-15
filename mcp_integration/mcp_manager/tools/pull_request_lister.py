@@ -1,5 +1,6 @@
 from crewai.tools import BaseTool
-from mcp_manager.utils import mcp_tool
+from mcp_manager.utils import mcp_tool, mcp_tool_sync
+import asyncio
 
 
 class GetPullRequestsTool(BaseTool):
@@ -17,7 +18,25 @@ class GetPullRequestsTool(BaseTool):
             List of pull requests in the repository
         """
         print(f"Pull Requests Lister: Get the pull requests issues for {owner}/{repo}")
-        result = mcp_tool([
+        result = mcp_tool_sync([
+            'tools', 'list_pull_requests',
+            '--owner', owner,
+            '--repo', repo,
+            '--sort', "updated",
+            '--direction', 'desc',
+            '--perPage', '5',
+            '--page', '1'
+        ])
+        if isinstance(result, list):
+            return result
+        else:
+            print(f"Pull Request Lister: Unexpected result: {result}")
+            return []
+    
+    async def _arun(self, owner: str, repo: str) -> list:
+        """Async version of _run for concurrent execution."""
+        print(f"Pull Requests Lister: Get the pull requests issues for {owner}/{repo}")
+        result = await mcp_tool([
             'tools', 'list_pull_requests',
             '--owner', owner,
             '--repo', repo,

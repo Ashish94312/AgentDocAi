@@ -1,5 +1,6 @@
 from crewai.tools import BaseTool
-from ..utils import mcp_tool
+from ..utils import mcp_tool, mcp_tool_sync
+import asyncio
 
 
 class GetIssueTool(BaseTool):
@@ -17,7 +18,25 @@ class GetIssueTool(BaseTool):
             List of open issues in the repository
         """
         print(f"Issue Retriever: getting open issues for {owner}/{repo}")
-        result = mcp_tool([
+        result = mcp_tool_sync([
+            'tools', 'list_issues',
+            '--owner', owner,
+            '--repo', repo,
+            '--state', 'open',
+            '--perPage', '5',
+            '--page', '1'
+        ])
+
+        if isinstance(result, list):
+            return result
+        else:
+            print(f"Issue Retriever: Unexpected result: {result}")
+            return []
+    
+    async def _arun(self, owner: str, repo: str) -> list:
+        """Async version of _run for concurrent execution."""
+        print(f"Issue Retriever: getting open issues for {owner}/{repo}")
+        result = await mcp_tool([
             'tools', 'list_issues',
             '--owner', owner,
             '--repo', repo,

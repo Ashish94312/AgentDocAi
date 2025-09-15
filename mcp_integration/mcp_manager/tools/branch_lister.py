@@ -1,5 +1,6 @@
 from crewai.tools import BaseTool
-from mcp_manager.utils import mcp_tool
+from mcp_manager.utils import mcp_tool, mcp_tool_sync
+import asyncio
 
 
 class GetRepoBranchesTool(BaseTool):
@@ -19,7 +20,31 @@ class GetRepoBranchesTool(BaseTool):
             List of branches in the repository
         """
         print(f"Branch Lister: Getting branches of {owner}/{repo}")
-        result = mcp_tool([
+        result = mcp_tool_sync([
+            'tools', 'list_branches',
+            '--owner', owner,
+            '--repo', repo,
+            '--perPage', str(per_page),
+            '--page', str(page)
+        ])
+        
+        if isinstance(result, list):
+            return result
+        elif isinstance(result, str):
+            try:
+                import json
+                return json.loads(result)
+            except json.JSONDecodeError:
+                print(f"Branch Lister: Failed to parse JSON result: {result}")
+                return []
+        else:
+            print(f"Branch Lister: Unexpected result type: {type(result)}, value: {result}")
+            return []
+    
+    async def _arun(self, owner: str, repo: str, per_page: int = 5, page: int = 1) -> list:
+        """Async version of _run for concurrent execution."""
+        print(f"Branch Lister: Getting branches of {owner}/{repo}")
+        result = await mcp_tool([
             'tools', 'list_branches',
             '--owner', owner,
             '--repo', repo,
@@ -73,7 +98,40 @@ class GetRepoFileStructureTool(BaseTool):
         if ref:
             command_args.extend(['--ref', ref])
         
-        result = mcp_tool(command_args)
+        result = mcp_tool_sync(command_args)
+        
+        if isinstance(result, list):
+            return result
+        elif isinstance(result, str):
+            try:
+                import json
+                return json.loads(result)
+            except json.JSONDecodeError:
+                print(f"File Structure Tool: Failed to parse JSON result: {result}")
+                return []
+        else:
+            print(f"File Structure Tool: Unexpected result type: {type(result)}, value: {result}")
+            return []
+    
+    async def _arun(self, owner: str, repo: str, path: str = "/", ref: str = None) -> list:
+        """Async version of _run for concurrent execution."""
+        print(f"File Structure Tool: Getting file structure of {owner}/{repo} at path: {path}")
+        
+        # Ensure path ends with "/" for directories
+        if not path.endswith("/"):
+            path += "/"
+        
+        command_args = [
+            'tools', 'get_file_contents',
+            '--owner', owner,
+            '--repo', repo,
+            '--path', path
+        ]
+        
+        if ref:
+            command_args.extend(['--ref', ref])
+        
+        result = await mcp_tool(command_args)
         
         if isinstance(result, list):
             return result

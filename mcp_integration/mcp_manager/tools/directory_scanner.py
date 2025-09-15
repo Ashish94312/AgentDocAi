@@ -1,5 +1,6 @@
 from crewai.tools import BaseTool
-from mcp_manager.utils import mcp_tool
+from mcp_manager.utils import mcp_tool, mcp_tool_sync
+import asyncio
 
 
 class GetRepoFilesTool(BaseTool):
@@ -18,7 +19,18 @@ class GetRepoFilesTool(BaseTool):
             List of files and folders in the repository
         """
         print(f"Repo structure Lister: Get files at {path} for {owner}/{repo}")
-        result = mcp_tool([
+        result = mcp_tool_sync([
+            "tools", "get_file_contents",
+            "--owner", owner,
+            "--repo", repo,
+            "--path", path
+        ])
+        return result if isinstance(result, list) else []
+    
+    async def _arun(self, owner: str, repo: str, path: str = "/") -> list:
+        """Async version of _run for concurrent execution."""
+        print(f"Repo structure Lister: Get files at {path} for {owner}/{repo}")
+        result = await mcp_tool([
             "tools", "get_file_contents",
             "--owner", owner,
             "--repo", repo,

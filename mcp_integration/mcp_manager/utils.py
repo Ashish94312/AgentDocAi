@@ -3,9 +3,10 @@ import subprocess
 import json
 import os
 import time
+import asyncio
 from django.conf import settings
 
-def mcp_tool(command_args: list[str]) -> dict or list or str or None:
+async def mcp_tool(command_args: list[str]) -> dict or list or str or None:
     """
     Executes the MCP server directly with the given command arguments and returns the JSON response.
     This bypasses the problematic mcpcurl tool and communicates directly with the MCP server.
@@ -77,7 +78,7 @@ def mcp_tool(command_args: list[str]) -> dict or list or str or None:
         )
         
         # Wait a moment for server to start
-        time.sleep(1)
+        await asyncio.sleep(1)
         
         # Send the request
         request_json = json.dumps(mcp_request) + '\n'
@@ -150,3 +151,24 @@ def mcp_tool(command_args: list[str]) -> dict or list or str or None:
     except Exception as e:
         print(f"An unexpected error occurred while running MCP server: {e}")
         return None
+
+
+def mcp_tool_sync(command_args: list[str]) -> dict or list or str or None:
+    """
+    Synchronous wrapper for the async mcp_tool function.
+    This maintains backward compatibility with existing code.
+    """
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # If we're already in an async context, we need to use asyncio.create_task
+            # But since this is a sync wrapper, we'll run in a new thread
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(asyncio.run, mcp_tool(command_args))
+                return future.result()
+        else:
+            return loop.run_until_complete(mcp_tool(command_args))
+    except RuntimeError:
+        # No event loop running, create a new one
+        return asyncio.run(mcp_tool(command_args))

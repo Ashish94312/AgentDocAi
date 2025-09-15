@@ -2,13 +2,16 @@ import subprocess
 import json
 import os
 import markdown
+import asyncio
 from django.shortcuts import render
 from django.conf import settings
 from django.urls import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from langchain_openai import ChatOpenAI
 
-from .crews.crew import build_crew
+from .crews.crew import build_crew, execute_crew_async
 
 
 GITHUB_TOKEN = getattr(settings, 'GITHUB_PERSONAL_ACCESS_TOKEN', None)
@@ -123,6 +126,124 @@ def generate_documentation(request):
                 return render(request, 'mcp_manager/documentation_interface.html', {'error': error})
 
     return render(request, 'mcp_manager/documentation_interface.html')
+
+
+async def generate_documentation_async(request):
+    """
+    Async version of generate_documentation that uses concurrent execution.
+    This provides better performance by running multiple API calls in parallel.
+    """
+    if request.method == 'POST':
+        repo_url = request.POST.get('repo_url', '')
+        if repo_url:
+            try:
+                owner, repo_name = extract_owner_repo(repo_url)
+
+                if owner and repo_name:
+                    if not OPENAI_API_KEY:
+                        error = "Error: OPENAI_API_KEY is not set in Django settings."
+                        return render(request, 'mcp_manager/documentation_interface.html', {'error': error})
+
+                    # Use async crew execution
+                    print(f"Starting async documentation generation for {owner}/{repo_name}")
+                    crew_result = await execute_crew_async(owner, repo_name)
+                    print(f"Async crew execution completed for {owner}/{repo_name}")
+
+                    # Create the generate_docs directory if it doesn't exist
+                    docs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'generate_docs')
+                    os.makedirs(docs_dir, exist_ok=True)
+
+                    output_files = [
+                        os.path.join(docs_dir, "repo_structure.md"),
+                        os.path.join(docs_dir, "report_issues.md"),
+                        os.path.join(docs_dir, "pull_requests.md"),
+                        os.path.join(docs_dir, "branches.md")
+                    ]
+
+                    final_output_path = os.path.join(docs_dir, "summary.md")
+                    combined_markdown_path = combine_markdown_files(output_files, final_output_path, owner, repo_name)
+
+                    if combined_markdown_path:
+                        html_content = convert_markdown_to_html(combined_markdown_path)
+                        if html_content:
+                            return render(request, 'mcp_manager/documentation_display.html', {
+                                'documentation': html_content
+                            })
+                        else:
+                            error = "Failed to convert combined Markdown to HTML."
+                            return render(request, 'mcp_manager/documentation_interface.html', {'error': error})
+                    else:
+                        error = "Failed to combine the documentation files."
+                        return render(request, 'mcp_manager/documentation_interface.html', {'error': error})
+                else:
+                    error = "Invalid GitHub repository URL."
+                    return render(request, 'mcp_manager/documentation_interface.html', {'error': error})
+
+            except ValueError as e:
+                error = str(e)
+                return render(request, 'mcp_manager/documentation_interface.html', {'error': error})
+
+    return render(request, 'mcp_manager/documentation_interface.html')
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+async def generate_documentation_api_async(request):
+    """
+    Async API endpoint for documentation generation.
+    Returns JSON response for AJAX requests.
+    """
+    try:
+        data = json.loads(request.body)
+        repo_url = data.get('repo_url', '')
+        
+        if not repo_url:
+            return JsonResponse({'error': 'Repository URL is required'}, status=400)
+        
+        owner, repo_name = extract_owner_repo(repo_url)
+        
+        if not OPENAI_API_KEY:
+            return JsonResponse({'error': 'OPENAI_API_KEY is not set in Django settings'}, status=500)
+        
+        # Use async crew execution
+        print(f"Starting async API documentation generation for {owner}/{repo_name}")
+        crew_result = await execute_crew_async(owner, repo_name)
+        print(f"Async API crew execution completed for {owner}/{repo_name}")
+        
+        # Create the generate_docs directory if it doesn't exist
+        docs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'generate_docs')
+        os.makedirs(docs_dir, exist_ok=True)
+        
+        output_files = [
+            os.path.join(docs_dir, "repo_structure.md"),
+            os.path.join(docs_dir, "report_issues.md"),
+            os.path.join(docs_dir, "pull_requests.md"),
+            os.path.join(docs_dir, "branches.md")
+        ]
+        
+        final_output_path = os.path.join(docs_dir, "summary.md")
+        combined_markdown_path = combine_markdown_files(output_files, final_output_path, owner, repo_name)
+        
+        if combined_markdown_path:
+            html_content = convert_markdown_to_html(combined_markdown_path)
+            if html_content:
+                return JsonResponse({
+                    'success': True,
+                    'documentation': html_content,
+                    'owner': owner,
+                    'repo': repo_name
+                })
+            else:
+                return JsonResponse({'error': 'Failed to convert Markdown to HTML'}, status=500)
+        else:
+            return JsonResponse({'error': 'Failed to combine documentation files'}, status=500)
+            
+    except ValueError as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON in request body'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': f'Unexpected error: {str(e)}'}, status=500)
 
             
 
