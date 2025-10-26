@@ -1,25 +1,14 @@
 from crewai.tools import BaseTool
 from mcp_manager.utils import mcp_tool, mcp_tool_sync
 import asyncio
-
+import json
 
 class GetRepoBranchesTool(BaseTool):
     name: str = "get_repo_branches"
     description: str = "Fetch and provide a list of branches of the GitHub repository using the MCP server"
     
     def _run(self, owner: str, repo: str, per_page: int = 5, page: int = 1) -> list:
-        """Fetch and provide a list of branches of the GitHub repository using the MCP server.
-        
-        Args:
-            owner: Repository owner (username or organization)
-            repo: Repository name
-            per_page: Number of results per page (default: 5, max: 100)
-            page: Page number (default: 1)
-        
-        Returns:
-            List of branches in the repository
-        """
-        print(f"Branch Lister: Getting branches of {owner}/{repo}")
+        print(f"Getting branches of {owner}/{repo}")
         result = mcp_tool_sync([
             'tools', 'list_branches',
             '--owner', owner,
@@ -32,18 +21,16 @@ class GetRepoBranchesTool(BaseTool):
             return result
         elif isinstance(result, str):
             try:
-                import json
                 return json.loads(result)
             except json.JSONDecodeError:
-                print(f"Branch Lister: Failed to parse JSON result: {result}")
+                print(f"JSON parse error: {result}")
                 return []
         else:
-            print(f"Branch Lister: Unexpected result type: {type(result)}, value: {result}")
+            print(f"Unexpected result type: {type(result)}")
             return []
     
     async def _arun(self, owner: str, repo: str, per_page: int = 5, page: int = 1) -> list:
-        """Async version of _run for concurrent execution."""
-        print(f"Branch Lister: Getting branches of {owner}/{repo}")
+        print(f"Getting branches of {owner}/{repo}")
         result = await mcp_tool([
             'tools', 'list_branches',
             '--owner', owner,
@@ -56,13 +43,12 @@ class GetRepoBranchesTool(BaseTool):
             return result
         elif isinstance(result, str):
             try:
-                import json
                 return json.loads(result)
             except json.JSONDecodeError:
-                print(f"Branch Lister: Failed to parse JSON result: {result}")
+                print(f"JSON parse error: {result}")
                 return []
         else:
-            print(f"Branch Lister: Unexpected result type: {type(result)}, value: {result}")
+            print(f"Unexpected result type: {type(result)}")
             return []
 
 
@@ -71,20 +57,9 @@ class GetRepoFileStructureTool(BaseTool):
     description: str = "Fetch and provide the file structure/directory contents of a GitHub repository using the MCP server"
     
     def _run(self, owner: str, repo: str, path: str = "/", ref: str = None) -> list:
-        """Fetch and provide the file structure/directory contents of a GitHub repository using the MCP server.
+        print(f"Getting file structure of {owner}/{repo} at {path}")
         
-        Args:
-            owner: Repository owner (username or organization)
-            repo: Repository name
-            path: Path to directory (default: "/" for root, must end with "/" for directories)
-            ref: Git reference (branch, tag, or commit SHA) (optional)
-        
-        Returns:
-            List of files and directories in the specified path
-        """
-        print(f"File Structure Tool: Getting file structure of {owner}/{repo} at path: {path}")
-        
-        # Ensure path ends with "/" for directories
+        # make sure path ends with "/" for directories
         if not path.endswith("/"):
             path += "/"
         
@@ -104,20 +79,17 @@ class GetRepoFileStructureTool(BaseTool):
             return result
         elif isinstance(result, str):
             try:
-                import json
                 return json.loads(result)
             except json.JSONDecodeError:
-                print(f"File Structure Tool: Failed to parse JSON result: {result}")
+                print(f"JSON parse error: {result}")
                 return []
         else:
-            print(f"File Structure Tool: Unexpected result type: {type(result)}, value: {result}")
+            print(f"Unexpected result type: {type(result)}")
             return []
     
     async def _arun(self, owner: str, repo: str, path: str = "/", ref: str = None) -> list:
-        """Async version of _run for concurrent execution."""
-        print(f"File Structure Tool: Getting file structure of {owner}/{repo} at path: {path}")
+        print(f"Getting file structure of {owner}/{repo} at {path}")
         
-        # Ensure path ends with "/" for directories
         if not path.endswith("/"):
             path += "/"
         
@@ -137,16 +109,14 @@ class GetRepoFileStructureTool(BaseTool):
             return result
         elif isinstance(result, str):
             try:
-                import json
                 return json.loads(result)
             except json.JSONDecodeError:
-                print(f"File Structure Tool: Failed to parse JSON result: {result}")
+                print(f"JSON parse error: {result}")
                 return []
         else:
-            print(f"File Structure Tool: Unexpected result type: {type(result)}, value: {result}")
+            print(f"Unexpected result type: {type(result)}")
             return []
 
-
-# Create instances of the tools
+# tool instances
 get_repo_branches = GetRepoBranchesTool()
 get_repo_file_structure = GetRepoFileStructureTool()

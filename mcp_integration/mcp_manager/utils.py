@@ -7,11 +7,7 @@ import asyncio
 from django.conf import settings
 
 async def mcp_tool(command_args: list[str]) -> dict or list or str or None:
-    """
-    Executes the MCP server directly with the given command arguments and returns the JSON response.
-    This bypasses the problematic mcpcurl tool and communicates directly with the MCP server.
-    """
-    # Get the project root directory (parent of mcp_integration)
+    # Execute MCP server directly, bypassing mcpcurl
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     github_mcp_server_path = os.path.join(project_root, 'github-mcp-server', 'github-mcp-server')
     
@@ -59,7 +55,7 @@ async def mcp_tool(command_args: list[str]) -> dict or list or str or None:
         else:
             i += 1
     
-    print(f"mcp_tool executing MCP request: {json.dumps(mcp_request, indent=2)}")
+    print(f"MCP request: {json.dumps(mcp_request, indent=2)}")
     
     # Set environment variables
     env = os.environ.copy()
@@ -149,15 +145,12 @@ async def mcp_tool(command_args: list[str]) -> dict or list or str or None:
         print("Error: Timeout communicating with MCP server.")
         return None
     except Exception as e:
-        print(f"An unexpected error occurred while running MCP server: {e}")
+        print(f"Unexpected error while running MCP server: {e}")
         return None
 
 
 def mcp_tool_sync(command_args: list[str]) -> dict or list or str or None:
-    """
-    Synchronous wrapper for the async mcp_tool function.
-    This maintains backward compatibility with existing code.
-    """
+    # sync wrapper for backward compatibility
     try:
         loop = asyncio.get_event_loop()
         if loop.is_running():

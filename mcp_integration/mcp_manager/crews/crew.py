@@ -35,11 +35,7 @@ def build_crew(owner, repo):
 
 
 async def build_crew_async(owner, repo):
-    """
-    Async version of build_crew that uses the concurrent executor for better performance.
-    This function pre-fetches data using concurrent execution before creating the crew.
-    """
-    # Pre-fetch data concurrently using the concurrent executor
+    # async version with concurrent data fetching
     print(f"Starting concurrent data fetching for {owner}/{repo}")
     concurrent_results = await execute_concurrent_github_analysis(owner, repo)
     
@@ -81,10 +77,7 @@ async def build_crew_async(owner, repo):
 
 
 async def execute_crew_async(owner, repo):
-    """
-    Build and execute the crew asynchronously.
-    This is the main async entry point for crew execution.
-    """
+    # main async entry point for crew execution
     crew = await build_crew_async(owner, repo)
     # Note: CrewAI's kickoff() is not async, so we run it in a thread pool
     loop = asyncio.get_event_loop()
