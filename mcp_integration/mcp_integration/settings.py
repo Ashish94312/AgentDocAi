@@ -32,13 +32,19 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-your-secret-key-here-chang
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # Allow all hosts for Railway deployment
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
-# Add testserver for Django test client
-if 'testserver' not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append('testserver')
-# Add Railway domain
-if 'agentdocai-production.up.railway.app' not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append('agentdocai-production.up.railway.app')
+allowed_hosts_str = os.getenv('ALLOWED_HOSTS', '*')
+ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_str.split(',') if h.strip()]
+if not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ['*']
+else:
+    if '127.0.0.1' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append('127.0.0.1')
+    if 'localhost' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append('localhost')
+    if 'testserver' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append('testserver')
+    if 'agentdocai-production.up.railway.app' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append('agentdocai-production.up.railway.app')
 
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 # Add Railway domain to CSRF trusted origins
@@ -63,7 +69,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -96,25 +102,48 @@ WSGI_APPLICATION = 'mcp_integration.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Database configuration for Railway
 import dj_database_url
+import psycopg2
 
 DATABASES = {}
+use_postgres = False
 
 if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(
-        conn_max_age=500,
-        conn_health_checks=True,
-    )
+    try:
+        db_config = dj_database_url.config(
+            conn_max_age=500,
+            conn_health_checks=True,
+        )
+        if db_config and db_config.get('ENGINE') == 'django.db.backends.postgresql':
+            try:
+                conn_params = {
+                    'host': db_config.get('HOST'),
+                    'port': db_config.get('PORT'),
+                    'user': db_config.get('USER'),
+                    'password': db_config.get('PASSWORD'),
+                    'dbname': db_config.get('NAME'),
+                    'connect_timeout': 5
+                }
+                test_conn = psycopg2.connect(**{k: v for k, v in conn_params.items() if v is not None})
+                test_conn.close()
+                use_postgres = True
+                DATABASES['default'] = db_config
+                DATABASES['default']['OPTIONS'] = {
+                    'connect_timeout': 10,
+                    'options': '-c statement_timeout=30000'
+                }
+            except (psycopg2.OperationalError, psycopg2.Error, Exception):
+                use_postgres = False
+    except Exception:
+        use_postgres = False
 
-# # Fallback to SQLite for local development
-# if not os.getenv('PGHOST'):
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': BASE_DIR / 'db.sqlite3',
-#         }
-#     }
+if not use_postgres:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
