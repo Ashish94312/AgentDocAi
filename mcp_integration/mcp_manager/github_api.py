@@ -1,9 +1,3 @@
-"""
-GitHub API utility functions to replace MCP server calls.
-This module provides direct GitHub API integration for deployment environments
-where the MCP server binary is not available.
-"""
-
 import requests
 import json
 from django.conf import settings
@@ -11,8 +5,6 @@ from typing import List, Dict, Any, Optional
 
 
 class GitHubAPI:
-    """GitHub API client for direct API calls."""
-    
     def __init__(self):
         self.base_url = "https://api.github.com"
         self.headers = {
@@ -22,17 +14,6 @@ class GitHubAPI:
         }
     
     def get_repo_contents(self, owner: str, repo: str, path: str = "/") -> List[Dict[str, Any]]:
-        """
-        Get repository contents (files and directories) at a given path.
-        
-        Args:
-            owner: Repository owner (username or organization)
-            repo: Repository name
-            path: Path to file/directory (default: "/")
-        
-        Returns:
-            List of files and directories
-        """
         try:
             url = f"{self.base_url}/repos/{owner}/{repo}/contents/{path.lstrip('/')}"
             response = requests.get(url, headers=self.headers, timeout=30)
@@ -40,7 +21,6 @@ class GitHubAPI:
             
             contents = response.json()
             if not isinstance(contents, list):
-                # Single file
                 return [contents]
             
             return contents
@@ -53,19 +33,6 @@ class GitHubAPI:
             return []
     
     def list_issues(self, owner: str, repo: str, state: str = "open", per_page: int = 5, page: int = 1) -> List[Dict[str, Any]]:
-        """
-        List issues from a GitHub repository.
-        
-        Args:
-            owner: Repository owner
-            repo: Repository name
-            state: Issue state (open, closed, all)
-            per_page: Number of issues per page
-            page: Page number
-        
-        Returns:
-            List of issues
-        """
         try:
             url = f"{self.base_url}/repos/{owner}/{repo}/issues"
             params = {
@@ -87,19 +54,6 @@ class GitHubAPI:
             return []
     
     def list_pull_requests(self, owner: str, repo: str, state: str = "open", per_page: int = 5, page: int = 1) -> List[Dict[str, Any]]:
-        """
-        List pull requests from a GitHub repository.
-        
-        Args:
-            owner: Repository owner
-            repo: Repository name
-            state: PR state (open, closed, all)
-            per_page: Number of PRs per page
-            page: Page number
-        
-        Returns:
-            List of pull requests
-        """
         try:
             url = f"{self.base_url}/repos/{owner}/{repo}/pulls"
             params = {
@@ -121,18 +75,6 @@ class GitHubAPI:
             return []
     
     def list_branches(self, owner: str, repo: str, per_page: int = 10, page: int = 1) -> List[Dict[str, Any]]:
-        """
-        List branches from a GitHub repository.
-        
-        Args:
-            owner: Repository owner
-            repo: Repository name
-            per_page: Number of branches per page
-            page: Page number
-        
-        Returns:
-            List of branches
-        """
         try:
             url = f"{self.base_url}/repos/{owner}/{repo}/branches"
             params = {
@@ -153,16 +95,6 @@ class GitHubAPI:
             return []
     
     def get_repository_info(self, owner: str, repo: str) -> Optional[Dict[str, Any]]:
-        """
-        Get basic repository information.
-        
-        Args:
-            owner: Repository owner
-            repo: Repository name
-        
-        Returns:
-            Repository information or None
-        """
         try:
             url = f"{self.base_url}/repos/{owner}/{repo}"
             response = requests.get(url, headers=self.headers, timeout=30)
@@ -178,22 +110,10 @@ class GitHubAPI:
             return None
 
 
-# Global instance
 github_api = GitHubAPI()
 
 
 def github_tool(tool_name: str, **kwargs) -> Any:
-    """
-    Unified function to call GitHub API tools.
-    This replaces the mcp_tool function for GitHub API calls.
-    
-    Args:
-        tool_name: Name of the tool to call
-        **kwargs: Tool-specific arguments
-    
-    Returns:
-        Tool result
-    """
     if tool_name == "get_file_contents":
         return github_api.get_repo_contents(
             owner=kwargs.get("owner"),

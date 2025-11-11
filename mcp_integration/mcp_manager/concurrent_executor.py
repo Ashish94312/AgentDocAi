@@ -1,8 +1,3 @@
-"""
-Concurrent task executor for improved performance.
-This module provides utilities for running multiple GitHub API operations concurrently.
-"""
-
 import asyncio
 import time
 from typing import List, Dict, Any, Optional, Tuple
@@ -15,7 +10,6 @@ from mcp_manager.tools.branch_lister import get_repo_branches
 
 @dataclass
 class TaskResult:
-    """Result of a concurrent task execution."""
     task_name: str
     success: bool
     data: Any
@@ -24,23 +18,14 @@ class TaskResult:
 
 
 class ConcurrentGitHubExecutor:
-    """
-    Executes multiple GitHub API operations concurrently for better performance.
-    """
-    
     def __init__(self, owner: str, repo: str):
         self.owner = owner
         self.repo = repo
         self.results: Dict[str, TaskResult] = {}
     
     async def execute_all_tasks(self) -> Dict[str, TaskResult]:
-        """
-        Execute all GitHub API tasks concurrently.
-        Returns a dictionary mapping task names to their results.
-        """
         start_time = time.time()
         
-        # Define all tasks to execute concurrently
         tasks = {
             'repo_structure': self._get_repo_structure(),
             'issues': self._get_issues(),
@@ -72,7 +57,6 @@ class ConcurrentGitHubExecutor:
         return self.results
     
     async def _get_repo_structure(self) -> TaskResult:
-        """Get repository structure asynchronously."""
         start_time = time.time()
         try:
             data = await get_repo_files._arun(self.owner, self.repo, "/")
@@ -92,7 +76,6 @@ class ConcurrentGitHubExecutor:
             )
     
     async def _get_issues(self) -> TaskResult:
-        """Get repository issues asynchronously."""
         start_time = time.time()
         try:
             data = await get_issue._arun(self.owner, self.repo)
@@ -112,7 +95,6 @@ class ConcurrentGitHubExecutor:
             )
     
     async def _get_pull_requests(self) -> TaskResult:
-        """Get repository pull requests asynchronously."""
         start_time = time.time()
         try:
             data = await get_pull_requests._arun(self.owner, self.repo)
@@ -132,7 +114,6 @@ class ConcurrentGitHubExecutor:
             )
     
     async def _get_branches(self) -> TaskResult:
-        """Get repository branches asynchronously."""
         start_time = time.time()
         try:
             data = await get_repo_branches._arun(self.owner, self.repo)
@@ -152,7 +133,6 @@ class ConcurrentGitHubExecutor:
             )
     
     def get_successful_results(self) -> Dict[str, Any]:
-        """Get only the successful results."""
         return {
             name: result.data 
             for name, result in self.results.items() 
@@ -160,7 +140,6 @@ class ConcurrentGitHubExecutor:
         }
     
     def get_failed_tasks(self) -> List[str]:
-        """Get list of failed task names."""
         return [
             name 
             for name, result in self.results.items() 
@@ -168,7 +147,6 @@ class ConcurrentGitHubExecutor:
         ]
     
     def get_execution_summary(self) -> Dict[str, Any]:
-        """Get a summary of execution results."""
         total_time = sum(result.execution_time for result in self.results.values())
         successful_count = sum(1 for result in self.results.values() if result.success)
         failed_count = len(self.results) - successful_count
@@ -184,16 +162,6 @@ class ConcurrentGitHubExecutor:
 
 
 async def execute_concurrent_github_analysis(owner: str, repo: str) -> Dict[str, Any]:
-    """
-    High-level function to execute concurrent GitHub analysis.
-    
-    Args:
-        owner: Repository owner
-        repo: Repository name
-        
-    Returns:
-        Dictionary containing all analysis results and execution summary
-    """
     executor = ConcurrentGitHubExecutor(owner, repo)
     results = await executor.execute_all_tasks()
     
@@ -204,23 +172,15 @@ async def execute_concurrent_github_analysis(owner: str, repo: str) -> Dict[str,
     }
 
 
-# Performance comparison utilities
 class PerformanceComparator:
-    """Utility class to compare sync vs async performance."""
-    
     @staticmethod
     async def compare_execution_methods(owner: str, repo: str) -> Dict[str, Any]:
-        """
-        Compare synchronous vs asynchronous execution performance.
-        """
         print(f"Comparing execution methods for {owner}/{repo}")
         
-        # Test async execution
         start_time = time.time()
         async_results = await execute_concurrent_github_analysis(owner, repo)
         async_time = time.time() - start_time
         
-        # Test sync execution (simulated)
         start_time = time.time()
         sync_results = await _simulate_sync_execution(owner, repo)
         sync_time = time.time() - start_time
@@ -244,10 +204,8 @@ class PerformanceComparator:
 
 
 async def _simulate_sync_execution(owner: str, repo: str) -> Dict[str, Any]:
-    """Simulate synchronous execution by running tasks sequentially."""
     results = {}
     
-    # Run tasks sequentially
     start_time = time.time()
     try:
         results['repo_structure'] = await get_repo_files._arun(owner, repo, "/")

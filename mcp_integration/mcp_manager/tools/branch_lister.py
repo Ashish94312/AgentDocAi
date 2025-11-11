@@ -59,7 +59,6 @@ class GetRepoFileStructureTool(BaseTool):
     def _run(self, owner: str, repo: str, path: str = "/", ref: str = None) -> list:
         print(f"Getting file structure of {owner}/{repo} at {path}")
         
-        # make sure path ends with "/" for directories
         if not path.endswith("/"):
             path += "/"
         
@@ -117,6 +116,5 @@ class GetRepoFileStructureTool(BaseTool):
             print(f"Unexpected result type: {type(result)}")
             return []
 
-# tool instances
 get_repo_branches = GetRepoBranchesTool()
 get_repo_file_structure = GetRepoFileStructureTool()

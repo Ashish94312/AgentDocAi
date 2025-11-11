@@ -8,15 +8,6 @@ class GetIssueTool(BaseTool):
     description: str = "Fetch and provide a list of open issues from a GitHub repository using the MCP server"
     
     def _run(self, owner: str, repo: str) -> list:
-        """Fetch and provide a list of open issues from a GitHub repository using the MCP server.
-        
-        Args:
-            owner: Repository owner (username or organization)
-            repo: Repository name
-        
-        Returns:
-            List of open issues in the repository
-        """
         print(f"Issue Retriever: getting open issues for {owner}/{repo}")
         result = mcp_tool_sync([
             'tools', 'list_issues',
@@ -34,7 +25,6 @@ class GetIssueTool(BaseTool):
             return []
     
     async def _arun(self, owner: str, repo: str) -> list:
-        """Async version of _run for concurrent execution."""
         print(f"Issue Retriever: getting open issues for {owner}/{repo}")
         result = await mcp_tool([
             'tools', 'list_issues',

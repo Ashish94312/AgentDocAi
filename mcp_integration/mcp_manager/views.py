@@ -12,12 +12,10 @@ from langchain_openai import ChatOpenAI
 
 from .crews.crew import build_crew, execute_crew_async
 
-# TODO: move these to a config file later
 GITHUB_TOKEN = getattr(settings, 'GITHUB_PERSONAL_ACCESS_TOKEN', None)
 OPENAI_API_KEY = getattr(settings, 'OPENAI_API_KEY', None)
 
 def extract_owner_repo(repo_url):
-    # quick and dirty URL parsing
     parts = repo_url.split('/')
     if len(parts) >= 5 and parts[2] == 'github.com':
         owner = parts[3]
@@ -125,7 +123,6 @@ def generate_documentation(request):
 
 
 async def generate_documentation_async(request):
-    # async version - should be faster
     if request.method == 'POST':
         repo_url = request.POST.get('repo_url', '')
         if repo_url:
@@ -181,7 +178,6 @@ async def generate_documentation_async(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 async def generate_documentation_api_async(request):
-    # API endpoint for AJAX requests
     try:
         data = json.loads(request.body)
         repo_url = data.get('repo_url', '')

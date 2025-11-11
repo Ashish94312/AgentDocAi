@@ -7,7 +7,6 @@ class GetRepoFilesTool(BaseTool):
     description: str = "List files and folders at a given path in a GitHub repository using MCP server"
     
     def _run(self, owner: str, repo: str, path: str = "/") -> list:
-        # Get files from GitHub repo
         print(f"Getting files at {path} for {owner}/{repo}")
         result = mcp_tool_sync([
             "tools", "get_file_contents",
@@ -18,7 +17,6 @@ class GetRepoFilesTool(BaseTool):
         return result if isinstance(result, list) else []
     
     async def _arun(self, owner: str, repo: str, path: str = "/") -> list:
-        # async version
         print(f"Getting files at {path} for {owner}/{repo}")
         result = await mcp_tool([
             "tools", "get_file_contents",
@@ -28,5 +26,4 @@ class GetRepoFilesTool(BaseTool):
         ])
         return result if isinstance(result, list) else []
 
-# create instance
 get_repo_files = GetRepoFilesTool()
