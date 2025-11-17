@@ -1,54 +1,43 @@
-# Next.js Repository Pull Requests Summary
+# Summary of Recent Pull Requests for Vercel/Next.js
 
-## Recent Pull Requests
+## 1. [Update Rspack production test manifest](https://github.com/vercel/next.js/pull/86200)
+- **Created At:** 2025-11-17
+- **User:** [vercel-release-bot](https://github.com/vercel-release-bot)
+- **Labels:** tests, run-react-18-tests
+- **Summary:** This PR updates the production integration test manifest used when testing Rspack.
 
-### 1. [Cache Components] Discriminate static shell validation errors by type
-- **Author**: [gnoff](https://github.com/gnoff)
-- **Created At**: 2025-10-31
-- **State**: Open
-- **Description**: This pull request introduces a new technique to validate the static shell, allowing differentiation between uncached data and runtime data. It also improves heuristics around `generateMetadata` and `generateViewport` errors. New error pages for runtime sync IO have been added, and validation on HMR updates has been restored.
-- **Labels**: type: next, created-by: Next.js team, Documentation, tests
-- **Link**: [View PR](https://github.com/vercel/next.js/pull/85645)
+## 2. [Update Rspack development test manifest](https://github.com/vercel/next.js/pull/86201)
+- **Created At:** 2025-11-17
+- **User:** [vercel-release-bot](https://github.com/vercel-release-bot)
+- **Labels:** tests, run-react-18-tests
+- **Summary:** This PR updates the development integration test manifest used when testing Rspack.
 
-### 2. Turbopack: only enable nested async availability in production
-- **Author**: [sokra](https://github.com/sokra)
-- **Created At**: 2025-11-03
-- **State**: Open
-- **Description**: This pull request aims to avoid the combinations of paths problem in development, which generates excessive output files. It proposes enabling nested async availability only in production.
-- **Labels**: Turbopack, created-by: Turbopack team
-- **Link**: [View PR](https://github.com/vercel/next.js/pull/85728)
+## 3. [Model `||`, `&&`, and `??` as control flow operators](https://github.com/vercel/next.js/pull/85837)
+- **Created At:** 2025-11-05
+- **User:** [lukesandberg](https://github.com/lukesandberg)
+- **Labels:** Font (next/font), Turbopack, created-by: Turbopack team, tests
+- **Summary:** This PR handles control flow operators in the turbopack analyzer to trigger dead code handling and trim dependencies from dead branches.
 
-### 3. Tracing: Fix memory leak in span map
-- **Author**: [timneutkens](https://github.com/timneutkens)
-- **Created At**: 2025-10-29
-- **State**: Open
-- **Description**: This pull request addresses a memory leak caused by a small retainer object that is inserted on each request and not cleaned up. It also optimizes type checks by swapping from an array to a Set.
-- **Labels**: type: next, created-by: Turbopack team
-- **Link**: [View PR](https://github.com/vercel/next.js/pull/85529)
+## 4. [Feature/410 Gone Status Feature](https://github.com/vercel/next.js/pull/78706)
+- **Created At:** 2025-04-30
+- **User:** [Sam7](https://github.com/Sam7)
+- **Labels:** examples, type: next, Documentation, tests, Rspack
+- **Summary:** This PR adds support for HTTP 410 Gone status in Next.js, providing developers with a way to indicate that content has been permanently removed.
 
-### 4. Turbopack: Refactor output assets to allow lazy compute output assets
-- **Author**: [sokra](https://github.com/sokra)
-- **Created At**: 2025-11-04
-- **State**: Open
-- **Description**: This pull request proposes a refactor of output assets to enable lazy computation of output assets. It includes a checklist for contributors to ensure proper documentation and testing.
-- **Labels**: Font (next/font), Turbopack, created-by: Turbopack team
-- **Link**: [View PR](https://github.com/vercel/next.js/pull/85753)
+## 5. [Update 14-metadata-and-og-images.mdx](https://github.com/vercel/next.js/pull/86198)
+- **Created At:** 2025-11-17
+- **User:** [jokokoloko](https://github.com/jokokoloko)
+- **Labels:** Documentation
+- **Summary:** This PR changes example images to better match and be consistent within documentation copy.
 
-### 5. Build: Log amount of workers during static generation
-- **Author**: [timneutkens](https://github.com/timneutkens)
-- **Created At**: 2025-11-02
-- **State**: Open
-- **Description**: This pull request adds logging for the number of workers used during static generation, providing visibility into the build process.
-- **Labels**: type: next, created-by: Turbopack team, tests
-- **Link**: [View PR](https://github.com/vercel/next.js/pull/85706)
+---
 
-## Analysis
-The recent pull requests indicate a strong focus on improving the performance and reliability of the Next.js framework. Key themes include:
-- **Error Handling**: Enhancements in error reporting and validation processes.
-- **Performance Optimization**: Efforts to reduce memory leaks and improve the efficiency of asset management.
-- **Development Experience**: Changes aimed at improving the developer experience, particularly in the context of Turbopack.
+### Key Themes:
+- **Testing Enhancements:** The recent pull requests focus on updating test manifests for Rspack, indicating ongoing improvements in testing practices.
+- **Control Flow Operators:** The handling of control flow operators in Turbopack suggests a focus on optimizing the build process and improving performance.
+- **New Features:** The introduction of the 410 Gone status feature highlights a commitment to enhancing the framework's capabilities and improving SEO and user experience.
 
-## Recommendations
-- **Engage with Contributors**: Encourage discussions around these pull requests to gather feedback and foster collaboration.
-- **Monitor Performance Metrics**: Keep track of the impact of these changes on performance and stability.
-- **Documentation Updates**: Ensure that any new features or changes are well-documented to assist users and contributors.
+### Recommendations:
+- **Prioritize Testing Updates:** Ensure that the updates to the Rspack test manifests are thoroughly reviewed and integrated to maintain testing integrity.
+- **Monitor Control Flow Changes:** Keep an eye on the implementation of control flow operators to assess their impact on performance and functionality.
+- **Documentation Consistency:** Ensure that documentation is updated in line with new features to provide clear guidance to developers.

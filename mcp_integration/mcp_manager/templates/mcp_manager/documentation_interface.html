@@ -162,14 +162,69 @@
     <p style="color:red;">{{error}}</p>
     {% endif %}
 
-    <form method="post" action="{% url 'generate_documentation' %}">
+    <form id="docForm" method="post">
         {% csrf_token %}
         <div>
             <label for="repo_url"> github Repository URL</label>
-            <input type="url" id="repo_url" name="repo_url" size="60" placeholder="e.g., https://github.com/owner/repo"> 
+            <input type="url" id="repo_url" name="repo_url" size="60" placeholder="e.g., https://github.com/owner/repo" required> 
         </div>
         <button type="submit">Generate Documentation</button>   
     </form>
+
+    <div id="loading" style="display: none; margin-top: 16px; color: var(--accent);">
+        Generating documentation... Please wait.
+    </div>
+
+    <div id="result" style="display: none; margin-top: 24px;"></div>
+
+    <script>
+        document.getElementById('docForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const repoUrl = document.getElementById('repo_url').value;
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const errorMsg = document.querySelector('p[style*="color:red"]');
+            
+            if (errorMsg) errorMsg.remove();
+            
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            form.style.display = 'none';
+            
+            try {
+                const response = await fetch('{% url "generate_documentation_api" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({ repo_url: repoUrl })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.documentation) {
+                    result.innerHTML = data.documentation;
+                    result.style.display = 'block';
+                } else {
+                    const error = document.createElement('p');
+                    error.style.color = 'red';
+                    error.textContent = data.error || 'Failed to generate documentation';
+                    form.parentNode.insertBefore(error, form);
+                    form.style.display = 'grid';
+                }
+            } catch (error) {
+                const errorEl = document.createElement('p');
+                errorEl.style.color = 'red';
+                errorEl.textContent = 'Error: ' + error.message;
+                form.parentNode.insertBefore(errorEl, form);
+                form.style.display = 'grid';
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+    </script>
 
     <hr>
 

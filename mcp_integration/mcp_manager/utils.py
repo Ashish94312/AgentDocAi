@@ -2,6 +2,7 @@ import subprocess
 import json
 import os
 import asyncio
+import time
 from django.conf import settings
 
 async def mcp_tool(command_args):
@@ -31,7 +32,23 @@ async def mcp_tool(command_args):
         else:
             i += 1
     
-    request = {
+    initialize_request = {
+        "jsonrpc": "2.0",
+        "id": 0,
+        "method": "initialize",
+        "params": {
+            "protocolVersion": "2025-03-26",
+            "capabilities": {},
+            "clientInfo": {"name": "mcp-manager", "version": "1.0.0"}
+        }
+    }
+    
+    initialized_notification = {
+        "jsonrpc": "2.0",
+        "method": "notifications/initialized"
+    }
+    
+    tool_request = {
         "jsonrpc": "2.0",
         "id": 1,
         "method": "tools/call",
@@ -41,58 +58,103 @@ async def mcp_tool(command_args):
     env = os.environ.copy()
     env['GITHUB_PERSONAL_ACCESS_TOKEN'] = settings.GITHUB_PERSONAL_ACCESS_TOKEN
     
-    try:
-        proc = subprocess.Popen(
-            [server_path, '--toolsets', 'repos,issues,pull_requests,code_security', 'stdio'],
-            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            env=env, text=True, bufsize=1
-        )
-        await asyncio.sleep(1)
-        proc.stdin.write(json.dumps(request) + '\n')
-        proc.stdin.flush()
-        response = proc.stdout.readline()
-        proc.terminate()
-        proc.wait()
-        
-        if not response:
-            return None
-        
-        data = json.loads(response)
-        if 'error' in data:
-            return None
-        
-        result = data.get('result', {})
-        if 'content' in result and result['content']:
-            item = result['content'][0]
-            if 'text' in item:
-                try:
-                    return json.loads(item['text'])
-                except:
-                    return item['text']
-            return item
-        elif 'text' in result:
-            try:
-                return json.loads(result['text'])
-            except:
-                return result['text']
-        return result
-        
-    except FileNotFoundError:
-        try:
-            from .github_api import github_tool
-            return github_tool(tool_name, **args)
-        except ImportError:
-            return None
-    except:
+    if not os.path.exists(server_path):
+        print(f"MCP server not found at {server_path}")
         return None
+    
+    proc = subprocess.Popen(
+        [server_path, '--toolsets', 'repos,issues,pull_requests,code_security', 'stdio'],
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        env=env, text=True, bufsize=1
+    )
+    
+    proc.stdin.write(json.dumps(initialize_request) + '\n')
+    proc.stdin.flush()
+    
+    init_response = None
+    timeout = 5
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        line = line.strip()
+        if line:
+            data = json.loads(line)
+            if data.get('id') == 0:
+                init_response = data
+                break
+    
+    if not init_response:
+        proc.kill()
+        proc.wait()
+        return None
+    
+    proc.stdin.write(json.dumps(initialized_notification) + '\n')
+    proc.stdin.flush()
+    
+    time.sleep(0.1)
+    
+    proc.stdin.write(json.dumps(tool_request) + '\n')
+    proc.stdin.flush()
+    
+    tool_response = None
+    timeout = 25
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        line = line.strip()
+        if line:
+            data = json.loads(line)
+            if data.get('id') == 1:
+                tool_response = data
+                break
+            elif 'result' in data and 'error' not in data and data.get('id') != 0:
+                tool_response = data
+                break
+    
+    proc.stdin.close()
+    proc.wait(timeout=5)
+    
+    if not tool_response:
+        return None
+    
+    data = tool_response
+    if 'error' in data:
+        error_info = data.get('error', {})
+        if isinstance(error_info, dict):
+            error_msg = error_info.get('message', '')
+        else:
+            error_msg = str(error_info)
+        print(f"MCP error: {error_msg}")
+        return None
+    
+    result = data.get('result', {})
+    if not result:
+        return None
+    
+    if 'content' in result and result['content']:
+        item = result['content'][0]
+        if isinstance(item, dict) and 'text' in item:
+            text = item['text']
+            parsed = json.loads(text)
+            return parsed
+        return item
+    elif 'text' in result:
+        text = result['text']
+        parsed = json.loads(text)
+        return parsed
+    elif isinstance(result, list):
+        return result
+    elif isinstance(result, dict):
+        return result
+    return result
 
 def mcp_tool_sync(command_args):
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            import concurrent.futures
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                return executor.submit(asyncio.run, mcp_tool(command_args)).result()
-        return loop.run_until_complete(mcp_tool(command_args))
-    except RuntimeError:
-        return asyncio.run(mcp_tool(command_args))
+    new_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(new_loop)
+    result = new_loop.run_until_complete(mcp_tool(command_args))
+    new_loop.close()
+    return result

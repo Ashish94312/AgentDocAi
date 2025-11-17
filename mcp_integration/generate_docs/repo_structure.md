@@ -1,18 +1,64 @@
-# Next.js Repository Structure
+# Directory Structure of the Vercel Next.js Repository
 
-```markdown
-.
-├── .github/                 # GitHub related files
-├── docs/                    # Documentation files
-├── examples/                # Example projects
-├── packages/                # Package directories
-│   ├── next/                # Next.js core package
-│   ├── next-server/         # Next.js server package
-│   └── ...                  # Other packages
-├── public/                  # Static assets
-├── src/                     # Source code
-│   ├── components/          # UI Components
-│   ├── pages/               # Pages for the Next.js app
-│   └── styles/              # CSS/SCSS styles
-└── tests/                   # Test files
+```
+- [.alexignore](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.alexignore)
+- [.alexrc](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.alexrc)
+- [.cargo](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.cargo)
+- [.config](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.config)
+- [.cursorindexingignore](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.cursorindexingignore)
+- [.devcontainer](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.devcontainer)
+- [.git-blame-ignore-revs](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.git-blame-ignore-revs)
+- [.gitattributes](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.gitattributes)
+- [.github](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.github)
+- [.husky](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.husky)
+- [.ignore](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.ignore)
+- [.node-version](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.node-version)
+- [.npmrc](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.npmrc)
+- [.prettierignore](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.prettierignore)
+- [.prettierrc.json](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.prettierrc.json)
+- [.rustfmt.toml](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.rustfmt.toml)
+- [.typos.toml](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.typos.toml)
+- [.vscode](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/.vscode)
+- [CODE_OF_CONDUCT.md](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/CODE_OF_CONDUCT.md)
+- [Cargo.lock](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/Cargo.lock)
+- [Cargo.toml](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/Cargo.toml)
+- [UPGRADING.md](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/UPGRADING.md)
+- [apps](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/apps)
+- [bench](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/bench)
+- [contributing.md](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/contributing.md)
+- [contributing](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/contributing)
+- [crates](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/crates)
+- [docs](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/docs)
+- [errors](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/errors)
+- [eslint.cli.config.mjs](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/eslint.cli.config.mjs)
+- [eslint.config.mjs](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/eslint.config.mjs)
+- [examples](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/examples)
+- [jest.config.js](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/jest.config.js)
+- [jest.config.turbopack.js](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/jest.config.turbopack.js)
+- [lerna.json](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/lerna.json)
+- [license.md](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/license.md)
+- [lint-staged.config.js](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/lint-staged.config.js)
+- [package.json](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/package.json)
+- [packages](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/packages)
+- [patches](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/patches)
+- [pnpm-lock.yaml](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/pnpm-lock.yaml)
+- [pnpm-workspace.yaml](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/pnpm-workspace.yaml)
+- [readme.md](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/readme.md)
+- [release.js](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/release.js)
+- [rspack](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/rspack)
+- [run-tests.js](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/run-tests.js)
+- [rust-toolchain.toml](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/rust-toolchain.toml)
+- [scripts](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/scripts)
+- [sgconfig.yml](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/sgconfig.yml)
+- [socket.yaml](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/socket.yaml)
+- [test-config-errors](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/test-config-errors)
+- [test-file.txt](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/test-file.txt)
+- [test](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/test)
+- [tsconfig-tsec.json](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/tsconfig-tsec.json)
+- [tsconfig.json](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/tsconfig.json)
+- [tsec-exemptions.json](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/tsec-exemptions.json)
+- [turbo.json](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/turbo.json)
+- [turbo](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/turbo)
+- [turbopack](https://github.com/vercel/next.js/tree/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/turbopack)
+- [vercel.json](https://github.com/vercel/next.js/blob/a3aadbd37c2c19bdeac021b78a474d90bff9f9c0/vercel.json)
 ```

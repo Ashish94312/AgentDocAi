@@ -10,8 +10,9 @@ def analyze_repo_structure_task(owner, repo):
     return [
         Task(
             description=(
-                f"Use the 'get_repo_files' tool to explore the directory structure "
+                f"Use the 'get_repo_files' tool with owner='{owner}' and repo='{repo}' to explore the directory structure "
                 f"of the {owner}/{repo} repository. "
+                f"You MUST call the tool with these exact parameters: owner='{owner}' and repo='{repo}'. "
                 "Generate a Markdown-formatted file tree that shows the layout of files and folders. "
                 "For each file, include a bullet point linking to its GitHub `html_url`. "
                 "Do not include files like `.gitignore` unless they are significant. "
@@ -27,7 +28,7 @@ def analyze_repo_structure_task(owner, repo):
             tools=[get_repo_files],  
             output_file="generate_docs/repo_structure.md",  
             create_directory=True,
-            verbose=True
+            verbose=False
         )
     ]
 
@@ -36,7 +37,8 @@ def get_issue_tasks(owner, repo):
     return [
         Task(
             description=(
-                f"Use the 'get_issue' tool to fetch a list of all open issues from the {owner}/{repo} repository. "
+                f"Use the 'get_issue' tool with owner='{owner}' and repo='{repo}' to fetch a list of all open issues from the {owner}/{repo} repository. "
+                f"You MUST call the tool with these exact parameters: owner='{owner}' and repo='{repo}'. "
                 "Once you have the data, analyze it to identify key themes, active discussions, and possible blockers. "
                 "Summarize the issues in Markdown format. Provide helpful insights, and recommend which issue should be prioritized and why."
             ),
@@ -50,7 +52,7 @@ def get_issue_tasks(owner, repo):
             tools=[get_issue],
             output_file="generate_docs/report_issues.md",
             create_directory=True,
-            verbose=True
+            verbose=False
         )
     ]
 
@@ -58,13 +60,17 @@ def get_issue_tasks(owner, repo):
 def list_pull_requests_tasks(owner, repo):
     return [
         Task(
-            description=f"Fetch a list of 5 most recently created pull requests for the {owner}/{repo} repository using the 'get_pull_requests' tool. Analyze the provided lists to identify key themes, active discussions, and potential areas of focus.",
+            description=(
+                f"Use the 'get_pull_requests' tool with owner='{owner}' and repo='{repo}' to fetch a list of 5 most recently created pull requests for the {owner}/{repo} repository. "
+                f"You MUST call the tool with these exact parameters: owner='{owner}' and repo='{repo}'. "
+                "Analyze the provided lists to identify key themes, active discussions, and potential areas of focus."
+            ),
             expected_output=f"A Markdown-formatted summary of the repository's pull requests. Provide a concise and categorical summary of the requests and your feedback for it.",
             agent=pull_requests_fetcher_reporter,
             tools=[get_pull_requests],
             output_file="generate_docs/pull_requests.md",
             create_directory=True,
-            verbose=True
+            verbose=False
         )
     ]
 
@@ -72,12 +78,16 @@ def list_pull_requests_tasks(owner, repo):
 def list_branches_tasks(owner, repo):
     return [
         Task(
-            description=f"Fetch a list of 5 branches created from the {owner}/{repo} repository using the 'get_repo_branches' tool. Analyze the provided lists to identify key themes, active discussions, and potential areas of focus.",
+            description=(
+                f"Use the 'get_repo_branches' tool with owner='{owner}' and repo='{repo}' to fetch a list of 5 branches from the {owner}/{repo} repository. "
+                f"You MUST call the tool with these exact parameters: owner='{owner}' and repo='{repo}'. "
+                "Analyze the provided lists to identify key themes, active discussions, and potential areas of focus."
+            ),
             expected_output=f"A Markdown-formatted summary of the repository's branches. Provide a concise and categorical summary of the requests and your feedback for it.",
             agent=repo_branch_reporter,
             tools=[get_repo_branches],
             output_file="generate_docs/branches.md",
             create_directory=True,
-            verbose=True
+            verbose=False
         )
     ]
